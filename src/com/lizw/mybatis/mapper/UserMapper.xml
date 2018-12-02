@@ -3,6 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lizw.mybatis.mapper.UserMapper">
+    <sql id="selector">
+        SELECT * FROM user
+    </sql>
     <!--通过ID查询一个客户-->
     <select id="findUserById" parameterType="Integer" resultType="User">
         SELECT * FROM USER WHERE id = #{v}
@@ -29,4 +32,44 @@
         DELETE FROM USER
         WHERE id = #{v}
     </delete>
+
+    <select id="findUserByQueryVo" parameterType="QueryVo" resultType="User">
+        SELECT * FROM USER WHERE username LIKE '%${user.username}%'
+    </select>
+    
+    <select id="countUser" resultType="Integer">
+        SELECT COUNT(*) FROM user;
+    </select>
+
+    <select id="selectUserBySexAndUsername" parameterType="User" resultType="User">
+        <include refid="selector"/>
+        <where>
+            <if test="sex != null and sex != ''">
+                sex = #{sex}
+            </if>
+            <if test="username != null and username != ''">
+                AND username = #{username}
+            </if>
+        </where>
+    </select>
+
+    <!--<select id="selectUserByIds" parameterType="QueryVo" resultType="User">
+        <include refid="selector"/>
+        <where>
+            id IN
+            <foreach collection="idList" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>-->
+
+    <select id="selectUserByIds" parameterType="Integer" resultType="User">
+        <include refid="selector"/>
+        <where>
+            id IN
+            <foreach collection="list" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
 </mapper>
